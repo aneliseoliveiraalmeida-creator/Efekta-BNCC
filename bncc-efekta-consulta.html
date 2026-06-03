@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta BNCC × Efekta</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1f2937;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0a500;
+    --accent2: #3d8bcd;
+    --green: #3fb950;
+    --cefr-a1: #6366f1; --cefr-a2: #8b5cf6;
+    --cefr-b1: #0ea5e9; --cefr-b1p: #06b6d4;
+    --cefr-b2: #10b981; --cefr-c1: #f59e0b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0f1e2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .logo-block h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .logo-block p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .badge {
+    background: rgba(240,165,0,0.12);
+    border: 1px solid rgba(240,165,0,0.3);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* CONTROLS */
+  .controls {
+    max-width: 1200px;
+    margin: 28px auto 0;
+    padding: 0 40px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ctrl-group label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+  }
+
+  select, input[type="text"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  select:focus, input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(240,165,0,0.15);
+  }
+  select { min-width: 150px; }
+  input[type="text"] { min-width: 280px; }
+
+  .search-wrap { position: relative; }
+  .search-wrap input { padding-left: 36px; }
+  .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .btn-clear {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-clear:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RESULTS INFO */
+  .results-bar {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .results-count {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .results-count span { color: var(--accent); font-weight: 600; }
+
+  /* CARDS GRID */
+  .grid {
+    max-width: 1200px;
+    margin: 20px auto 60px;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .skill-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(240,165,0,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .skill-card.expanded {
+    border-color: var(--accent);
+    grid-column: span 2;
+  }
+
+  .card-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-code {
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.45;
+    font-weight: 400;
+  }
+  .card-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .tag-ano { background: rgba(61,139,205,0.15); color: #5badde; border: 1px solid rgba(61,139,205,0.25); }
+  .tag-cefr-A1 { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  .tag-cefr-A2 { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+  .tag-cefr-B1 { background: rgba(14,165,233,0.15); color: #7dd3fc; border: 1px solid rgba(14,165,233,0.3); }
+  .tag-cefr-B1p { background: rgba(6,182,212,0.15); color: #67e8f9; border: 1px solid rgba(6,182,212,0.3); }
+  .tag-cefr-B2 { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+  .tag-cefr-C1 { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+  /* LEVELS accordion */
+  .card-levels {
+    display: none;
+  }
+  .skill-card.expanded .card-levels { display: block; }
+  .level-row {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 80px 70px 1fr;
+    gap: 12px;
+    align-items: start;
+    transition: background 0.1s;
+  }
+  .level-row:last-child { border-bottom: none; }
+  .level-row:hover { background: var(--surface2); }
+  .cefr-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 22px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .cefr-A1 { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .cefr-A2 { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+  .cefr-B1 { background: rgba(14,165,233,0.2); color: #7dd3fc; }
+  .cefr-B1p { background: rgba(6,182,212,0.2); color: #67e8f9; }
+  .cefr-B2 { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+  .cefr-C1 { background: rgba(245,158,11,0.2); color: #fcd34d; }
+
+  .efekta-level {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding-top: 2px;
+    font-weight: 500;
+  }
+  .level-activities {
+    font-size: 0.78rem;
+    color: #cdd9e5;
+    line-height: 1.5;
+  }
+  .level-activities ul {
+    padding-left: 14px;
+    list-style: disc;
+  }
+  .level-activities li { margin-bottom: 2px; }
+
+  /* expand toggle */
+  .expand-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
+    transition: color 0.15s;
+  }
+  .expand-btn:hover { color: var(--accent); }
+  .expand-btn .arrow { transition: transform 0.2s; font-size: 0.65rem; }
+  .skill-card.expanded .expand-btn .arrow { transform: rotate(180deg); }
+  .skill-card.expanded .expand-btn { color: var(--accent); }
+
+  /* empty state */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+  .empty .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+  .empty h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .empty p { font-size: 0.85rem; }
+
+  /* HIGHLIGHT */
+  mark {
+    background: rgba(240,165,0,0.3);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* CEFR Legend */
+  .legend {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .legend span {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 18px 16px; }
+    .controls, .results-bar, .grid, .legend { padding: 0 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .skill-card.expanded { grid-column: span 1; }
+    .level-row { grid-template-columns: 1fr; }
+    input[type="text"] { min-width: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-block">
+      <h1>BNCC × Efekta</h1>
+      <p>Consulta de Habilidades por Nível</p>
+    </div>
+    <span class="badge">Inglês — 6º ao EM</span>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label>Série / Segmento</label>
+    <select id="filterAno">
+      <option value="">Todos</option>
+      <option value="6º Ano">6º Ano</option>
+      <option value="7º Ano">7º Ano</option>
+      <option value="8º Ano">8º Ano</option>
+      <option value="9º Ano">9º Ano</option>
+      <option value="Ensino Médio">Ensino Médio</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Nível CEFR</label>
+    <select id="filterCEFR">
+      <option value="">Todos</option>
+      <option value="A1">A1</option>
+      <option value="A2">A2</option>
+      <option value="B1">B1</option>
+      <option value="B1+">B1+</option>
+      <option value="B2">B2</option>
+      <option value="C1">C1</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Nível Efekta</label>
+    <select id="filterEfekta">
+      <option value="">Todos</option>
+      <option value="1-3">1–3</option>
+      <option value="4-6">4–6</option>
+      <option value="7-9">7–9</option>
+      <option value="10-12">10–12</option>
+      <option value="13-14">13–14</option>
+      <option value="15-16">15–16</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Buscar habilidade ou código</label>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Ex: EF06LI01, oral, futuro..." />
+    </div>
+  </div>
+  <button class="btn-clear" onclick="clearFilters()">Limpar</button>
+</div>
+
+<div class="legend">
+  <span>CEFR:</span>
+  <span class="tag tag-cefr-A1">A1</span>
+  <span class="tag tag-cefr-A2">A2</span>
+  <span class="tag tag-cefr-B1">B1</span>
+  <span class="tag tag-cefr-B1p">B1+</span>
+  <span class="tag tag-cefr-B2">B2</span>
+  <span class="tag tag-cefr-C1">C1</span>
+</div>
+
+<div class="results-bar">
+  <p class="results-count">Exibindo <span id="countDisplay">0</span> habilidades</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const DATA = [
+  // ══════ 6º ANO ══════
+  { ano:"6º Ano", code:"EF06LI01", title:"Interagir em situações de intercâmbio oral, demonstrando iniciativa para utilizar a língua inglesa", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Diálogos básicos com frases-modelo","Perguntas e respostas simples (What's your name? Where are you from?)","Role-plays guiados de situações cotidianas","Speaking practice em todas as lições","Apresentações pessoais básicas","Conversas sobre preferências simples (I like/don't like)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Conversas sobre experiências passadas","Fazer e responder convites","Descrições mais elaboradas","\"Making plans with friends\" (atividade recorrente)","Conversas telefônicas","Check-in/check-out em hotéis","Iniciativa para manter conversas"]},
+    {cefr:"B1",efekta:"7-9",activities:["Discussões sobre planos futuros e aspirações","Entrevistas de emprego simuladas","Debates sobre preferências e opiniões","Negociações simples","\"The three A's of conversation\" (Answer, Add, Ask)","Turn-taking efetivo","Manutenção de conversas mais longas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Organização e condução de reuniões","Consultas médicas (role-play complexo)","Discussão de regras e segurança","Comparação e avaliação de opções","Negociação de serviços","Resolução colaborativa de problemas","Discourse markers avançados"]},
+    {cefr:"B2",efekta:"13-14",activities:["Debates estruturados sobre temas abstratos","Apresentações persuasivas","Argumentação e contra-argumentação","Mediação de conflitos","Discussões sobre questões sociais complexas","Entrevistas e podcasts simulados","Técnicas avançadas de persuasão"]},
+    {cefr:"C1",efekta:"15-16",activities:["Facilitação de workshops e seminários","Negociação de soluções criativas complexas","Discussões sobre dilemas éticos","Apresentações profissionais sofisticadas","Mediação entre perspectivas conflitantes","Comunicação intercultural de alto nível","Uso flexível da língua para fins sociais"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI02", title:"Coletar informações do grupo, perguntando e respondendo sobre a família, os amigos, a escola e a comunidade", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Perguntas básicas com Wh- questions (What, Where, Who)","Family vocabulary (mother, father, sister, brother)","School vocabulary (teacher, student, class)","Question formation com \"to be\" e \"do/does\"","Information gap activities simples","Surveys básicos sobre preferências"]},
+    {cefr:"A2",efekta:"4-6",activities:["Entrevistas sobre hobbies e interesses","Descrições de bairros e comunidades","Discussões sobre celebrações familiares","Coleta de informações sobre hábitos alimentares","Projetos sobre a comunidade local","Apresentações sobre família e amigos com mais detalhes"]},
+    {cefr:"B1",efekta:"7-9",activities:["Entrevistas sobre aspirações e planos futuros","Discussões sobre sistemas educacionais","Coleta de dados para projetos empreendedores","Pesquisas sobre experiências de aventura","Análise de informações coletadas","Apresentação de resultados de pesquisas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Pesquisas sobre experiências de intercâmbio","Comparação de sistemas escolares globais","Investigação sobre patrimônio cultural","Avaliação de serviços na comunidade","Análise crítica de informações coletadas","Síntese de dados complexos"]},
+    {cefr:"B2",efekta:"13-14",activities:["Pesquisas sobre necessidades comunitárias","Coleta de dados para debates estruturados","Análise de questões sociais complexas","Entrevistas formais e informais","Síntese de múltiplas perspectivas","Apresentação de findings com análise crítica"]},
+    {cefr:"C1",efekta:"15-16",activities:["Pesquisas sofisticadas sobre questões urbanas","Coleta de dados qualitativos e quantitativos","Entrevistas em profundidade","Análise de tendências sociais","Metodologias de pesquisa avançadas","Apresentação de resultados com nuances"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI03", title:"Solicitar esclarecimentos em língua inglesa sobre o que não entendeu e o significado de palavras ou expressões desconhecidas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Expressões fixas básicas: \"Can you repeat?\", \"What does... mean?\", \"How do you spell...?\"","\"Excuse me\", \"Sorry, I don't understand\"","Pedidos de repetição simples","Verificação de compreensão básica","Apontar para objetos/imagens","Uso de gestos e linguagem corporal"]},
+    {cefr:"A2",efekta:"4-6",activities:["\"Could you say that again, please?\"","\"What do you mean by...?\"","\"Is that correct?\"","Paraphrasing simples","Confirmação de informações","Estratégias de negociação de significado"]},
+    {cefr:"B1",efekta:"7-9",activities:["\"Could you clarify what you mean by...?\"","\"I'm not sure I follow. Could you explain...?\"","\"Let me check if I understood correctly...\"","Reformulação para confirmar","Pedidos de exemplos","Verificação ativa de compreensão"]},
+    {cefr:"B1+",efekta:"10-12",activities:["\"Could you elaborate on that point?\"","\"What exactly do you mean by...?\"","Distinção entre significados sutis","Pedidos de especificação","\"Are you referring to...?\"","Clarificação de ambiguidades"]},
+    {cefr:"B2",efekta:"13-14",activities:["\"Could you be more specific about...?\"","\"I'm not entirely clear on what you're implying...\"","Distinção entre conotação e denotação","Pedidos de definição precisa","Negociação de significados complexos"]},
+    {cefr:"C1",efekta:"15-16",activities:["\"Could you unpack that concept for me?\"","Exploração de significados implícitos","Pedidos de contextualização","Discussão de conotações culturais","Negociação de interpretações"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI04", title:"Reconhecer, com o apoio de palavras cognatas e pistas do contexto discursivo, o assunto e as informações principais em textos orais sobre temas familiares", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Pre-listening com cognatos visuais","Prediction exercises com imagens","Listening for gist (ideia geral)","Cognatos óbvios (family, restaurant, hotel)","Visual support constante","Vocabulário pré-ensinado","Múltiplas audições — Fala lenta e clara"]},
+    {cefr:"A2",efekta:"4-6",activities:["Identificação de cognatos em contexto","Context clues mais complexos","Listening for main ideas","Inferência de significado","Reconhecimento de palavras-chave","Suporte visual reduzido"]},
+    {cefr:"B1",efekta:"7-9",activities:["Identificação de tópico sem suporte visual","Main ideas vs. supporting details","Inferência de vocabulário desconhecido","Velocidade natural","Sotaques variados","Temas abstratos introduzidos"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Identificação de argumentos principais","Cognatos em linguagem técnica","Distinção entre fato e opinião","Inferência de atitudes e intenções","Múltiplos falantes","Linguagem natural rápida"]},
+    {cefr:"B2",efekta:"13-14",activities:["Identificação de teses e argumentos","Reconhecimento de nuances","Inferência de significados implícitos","Análise de estrutura argumentativa","Linguagem idiomática","Sotaques diversos"]},
+    {cefr:"C1",efekta:"15-16",activities:["Compreensão de argumentos sofisticados","Inferência de conotações culturais","Análise crítica de discurso","Linguagem coloquial e formal","Variedades linguísticas","Temas altamente especializados"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI05", title:"Aplicar os conhecimentos da língua inglesa para falar de si e de outras pessoas, explicitando informações pessoais e características relacionadas a gostos, preferências e rotinas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Present Simple: I am, I live, I like","Basic personal information (name, age, country)","Simple preferences (I like/don't like pizza)","Daily routines básicas (I wake up at 7)","Adverbs of frequency (always, never)","Descrições físicas simples (tall, short)","Vocabulário de família e hobbies"]},
+    {cefr:"A2",efekta:"4-6",activities:["Present Simple expandido para rotinas complexas","Like/love/hate + gerund (I love swimming)","Descrições de personalidade (friendly, shy)","Preferências detalhadas (I prefer... to...)","Comparações simples (taller than, more interesting)","Rotinas semanais completas"]},
+    {cefr:"B1",efekta:"7-9",activities:["Descrições elaboradas de preferências","Justificativas complexas (I prefer... because...)","Comparações sofisticadas","Discussão de mudanças em preferências","Descrições de personalidade detalhadas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise de preferências e sua evolução","Descrições de identidade cultural","Discussão de valores pessoais","Comparações interculturais","Reflexão sobre mudanças pessoais"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de preferências e valores","Discussão de influências culturais","Reflexão sobre identidade","Comparações culturais complexas","Expressão de filosofias pessoais"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise profunda de valores e crenças","Discussão de identidade em contextos múltiplos","Reflexão sobre desenvolvimento pessoal","Comparações interculturais sofisticadas","Articulação de visões de mundo"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI06", title:"Planejar apresentação sobre a família, a comunidade e a escola, compartilhando-a oralmente com o grupo", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Apresentações muito simples com frases memorizadas","Estrutura básica: Introdução + 3-4 frases + Conclusão","Visual aids obrigatórios (fotos, desenhos)","Apresentações de 1-2 minutos","Foco em informações factuais básicas"]},
+    {cefr:"A2",efekta:"4-6",activities:["Apresentações estruturadas (introdução, desenvolvimento, conclusão)","Uso de conectores simples (and, but, because)","Visual aids como suporte","Apresentações de 2-3 minutos","Q&A simples no final"]},
+    {cefr:"B1",efekta:"7-9",activities:["Apresentações bem organizadas","Uso de discourse markers (firstly, moreover, in conclusion)","Visual aids profissionais (slides, gráficos)","Apresentações de 3-5 minutos","Interação com audiência"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Apresentações sofisticadas com múltiplas seções","Uso de técnicas retóricas","Multimedia presentations","Apresentações de 5-7 minutos","Engajamento ativo da audiência"]},
+    {cefr:"B2",efekta:"13-14",activities:["Apresentações persuasivas e argumentativas","Estrutura complexa com sub-tópicos","Apresentações de 7-10 minutos","Debate pós-apresentação"]},
+    {cefr:"C1",efekta:"15-16",activities:["Apresentações acadêmicas/profissionais","Uso de linguagem persuasiva e retórica","Apresentações de 10-15 minutos","Facilitação de discussões"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI07", title:"Formular hipóteses sobre a finalidade de um texto em língua inglesa, com base em sua estrutura, organização textual e pistas gráficas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Identificação de tipo de texto por layout","Reconhecimento de gêneros básicos (menu, email, cartaz)","Uso de imagens e títulos para prever conteúdo","Pistas gráficas óbvias (ícones, cores, fotos)","Prediction antes da leitura"]},
+    {cefr:"A2",efekta:"4-6",activities:["Análise de estrutura textual básica","Identificação de propósito (informar, entreter, instruir)","Reconhecimento de organização (introdução, corpo, conclusão)","Skimming para ideia geral","Genre features recognition"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de estrutura argumentativa básica","Identificação de múltiplos propósitos","Reconhecimento de organização complexa","Inferência de audiência-alvo","Register identification"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise de estrutura retórica","Identificação de propósitos implícitos","Reconhecimento de técnicas persuasivas","Análise de coesão e coerência","Critical reading strategies"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de estrutura argumentativa","Identificação de bias e perspectiva","Reconhecimento de técnicas retóricas sofisticadas","Análise de intertextualidade"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise sofisticada de múltiplas camadas textuais","Identificação de propósitos múltiplos e conflitantes","Análise de posicionamento ideológico","Critical discourse analysis"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI08", title:"Identificar o assunto de um texto, reconhecendo sua organização textual e palavras cognatas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Identificação de tópico por título e imagens","Cognatos óbvios (family, restaurant, hotel, music)","Reconhecimento de palavras-chave","Topic sentences muito claras"]},
+    {cefr:"A2",efekta:"4-6",activities:["Identificação de main idea em parágrafos","Cognatos em contexto (celebration, tradition, adventure)","Reconhecimento de topic sentences","Distinção entre main idea e details"]},
+    {cefr:"B1",efekta:"7-9",activities:["Identificação de tema central em textos longos","Cognatos em linguagem mais formal","Reconhecimento de estrutura argumentativa","Main ideas vs. supporting details"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Identificação de temas implícitos","Cognatos em terminologia técnica","Reconhecimento de estruturas retóricas","Thesis statements","Hierarchical organization"]},
+    {cefr:"B2",efekta:"13-14",activities:["Identificação de temas múltiplos e inter-relacionados","Cognatos em linguagem acadêmica","Multiple perspectives","Critical analysis of organization"]},
+    {cefr:"C1",efekta:"15-16",activities:["Identificação de temas abstratos e nuanceados","Reconhecimento de estruturas discursivas complexas","Organização não-linear","Metalinguistic analysis"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI09", title:"Localizar informações específicas em texto", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Scanning para números, nomes, datas","Localização de informações explícitas","Matching exercises simples","True/False com informações óbvias","Completing forms com dados básicos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Scanning para informações específicas","Localização de detalhes em parágrafos","Answering Wh- questions","Completing charts/tables","Finding supporting details"]},
+    {cefr:"B1",efekta:"7-9",activities:["Scanning eficiente em textos longos","Localização de informações implícitas","Multiple choice com distractors","Synthesizing information from multiple sources"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Scanning em textos densos","Distinguishing fact from opinion","Identifying implicit information","Evaluating relevance of information"]},
+    {cefr:"B2",efekta:"13-14",activities:["Scanning em textos acadêmicos","Localização de argumentos específicos","Identifying evidence and examples","Evaluating quality of information"]},
+    {cefr:"C1",efekta:"15-16",activities:["Scanning em textos densos e abstratos","Identifying implicit assumptions","Synthesizing from multiple sophisticated sources","Evaluating credibility and bias"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI10", title:"Conhecer a organização de um dicionário bilíngue para construir repertório lexical", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Ordem alfabética","Estrutura básica de entrada (palavra + tradução)","Identificação de classes gramaticais (n., v., adj.)","Uso de dicionário ilustrado","Picture dictionaries"]},
+    {cefr:"A2",efekta:"4-6",activities:["Múltiplos significados de palavras","Exemplos de uso em frases","Identificação de phrasal verbs básicos","Collocations simples","Sinônimos e antônimos básicos"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de múltiplas acepções","Registro (formal/informal)","Phrasal verbs e idioms","Uso de thesaurus","Collocations complexas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Distinções sutis entre sinônimos","Expressões idiomáticas complexas","Uso de dicionários monolíngues","Usage notes"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise de nuances semânticas","Expressões especializadas","Dicionários especializados","Cultural connotations"]},
+    {cefr:"C1",efekta:"15-16",activities:["Distinções extremamente sutis","Registro em contextos profissionais/acadêmicos","Historical usage","Sociolinguistic variations"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI11", title:"Explorar ambientes virtuais e/ou aplicativos para construir repertório lexical na língua inglesa", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Vocabulary apps integrados na Plataforma","Flashcards digitais com imagens","Matching games","Drag-and-drop exercises","Gamification (pontos, badges)","Spaced repetition system"]},
+    {cefr:"A2",efekta:"4-6",activities:["Vocabulary in context exercises","Video-based vocabulary learning","Interactive dialogues","Collocation practice","Progress tracking"]},
+    {cefr:"B1",efekta:"7-9",activities:["Vocabulary from authentic texts","Video and audio resources","Phrasal verbs e idioms practice","Register awareness activities","Self-assessment tools"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Topic-specific vocabulary modules","Academic word lists","Specialized terminology","Personalized learning paths"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic vocabulary development","Professional terminology","Nuanced meaning exploration","Vocabulary in discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Highly specialized vocabulary","Domain-specific terminology","Subtle semantic distinctions","Expert-level analytics"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI12", title:"Interessar-se pelo texto lido, compartilhando suas ideias sobre o que o texto informa/comunica", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Reações simples (I like/don't like)","Perguntas básicas (Do you like...?)","Sharing preferences","Simple opinions (It's good/bad)","Relating to personal experience"]},
+    {cefr:"A2",efekta:"4-6",activities:["Opiniões com justificativas simples (I think... because...)","Comparações com experiência pessoal","Sharing reactions (interesting, boring, funny)","Simple debates"]},
+    {cefr:"B1",efekta:"7-9",activities:["Opiniões elaboradas com exemplos","Análise de diferentes perspectivas","Debates estruturados","Text-to-world connections","Critical responses"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise crítica de conteúdo","Avaliação de argumentos","Debates complexos","Collaborative analysis"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica sofisticada","Avaliação de bias e perspectiva","Debates acadêmicos","Research papers"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise crítica de alto nível","Debates filosóficos","Interdisciplinary connections","Publication-quality writing"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI13", title:"Listar ideias para a produção de textos, levando em conta o tema e o assunto", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Brainstorming com palavras-chave visuais","Listas simples de vocabulário","Uso de imagens para gerar ideias","Modelo de texto fornecido","Word banks pré-preparados","Guided brainstorming com professor"]},
+    {cefr:"A2",efekta:"4-6",activities:["Brainstorming em grupos pequenos","Mind maps simples","Listas organizadas por categorias","Perguntas guia (Who? What? Where? When?)","Topic webs","Simple outlining"]},
+    {cefr:"B1",efekta:"7-9",activities:["Mind mapping complex","Brainstorming com categorização","Freewriting para gerar ideias","Research para ideias","Audience e purpose consideration"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Brainstorming com análise crítica","Research-based idea generation","Multiple perspectives consideration","Thesis development","Argument mapping"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic brainstorming techniques","Literature review para ideias","Critical analysis of topic","Counterargument consideration"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert brainstorming strategies","Comprehensive research","Interdisciplinary connections","Complex thesis development"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI14", title:"Organizar ideias, selecionando-as em função da estrutura e do objetivo do texto", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Organização linear simples (First, Next, Then, Finally)","Sequencing com números (1, 2, 3)","Paragraph structure básica (3-4 sentences)","Topic sentence fornecida"]},
+    {cefr:"A2",efekta:"4-6",activities:["Organização em parágrafos (introduction, body, conclusion)","Topic sentences simples","Supporting details (2-3 por parágrafo)","Conectores básicos (and, but, because, so)"]},
+    {cefr:"B1",efekta:"7-9",activities:["Organização complexa (múltiplos parágrafos)","Topic sentences elaboradas","Discourse markers (firstly, moreover, however, in conclusion)","Logical progression of ideas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Organização hierárquica (main points, sub-points)","Clear thesis statement","Advanced connectors (furthermore, nevertheless, consequently)","Counterargument integration"]},
+    {cefr:"B2",efekta:"13-14",activities:["Organização acadêmica sofisticada","Complex thesis e argument structure","Sophisticated discourse markers","Rhetorical effectiveness"]},
+    {cefr:"C1",efekta:"15-16",activities:["Organização de nível profissional/acadêmico","Expert use of discourse markers","Sophisticated integration of sources","Publication-quality structure"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI15", title:"Produzir textos escritos em língua inglesa (histórias em quadrinhos, cartazes, chats, blogues, agendas) sobre si mesmo, família, amigos, gostos e rotinas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Emails simples (3-4 sentences)","Profiles básicos (name, age, country, likes)","Descrições curtas de família","Listas de preferências","Captions para fotos","Modelos fornecidos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Blog posts simples (80-100 words)","Descrições de eventos","Reviews básicos (restaurants, movies)","Emails informais expandidos","Social media posts","Diários pessoais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Blog posts elaborados (150-180 words)","Artigos sobre interesses pessoais","Reviews detalhados","Emails formais e informais","Personal statements","Opinion pieces"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Artigos analíticos (200-250 words)","Comparative essays","Detailed reviews com análise","Formal reports","Argumentative texts"]},
+    {cefr:"B2",efekta:"13-14",activities:["Ensaios argumentativos (300-350 words)","Análises críticas","Propostas de projetos","Research papers","Formal reports complexos"]},
+    {cefr:"C1",efekta:"15-16",activities:["Ensaios acadêmicos sofisticados (400+ words)","Análises profissionais","Research proposals","Position papers","Publication-quality writing"]}
+  ]},
+  { ano:"6º Ano", code:"EF06LI16", title:"Construir repertório relativo às diferentes formas de organização do texto escrito em língua inglesa (listas, bilhetes, convites, cartazes, avisos etc.)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Listas (shopping lists, to-do lists)","Bilhetes simples (notes to friends)","Convites básicos (birthday party invitation)","Cartazes simples","Text messages","Simple emails"]},
+    {cefr:"A2",efekta:"4-6",activities:["Emails informais estruturados","Blog posts simples","Social media posts","Announcements","Instructions (recipes, directions)","Reviews básicos"]},
+    {cefr:"B1",efekta:"7-9",activities:["Emails formais e informais","Articles para blogs/magazines","Reviews detalhados","Reports básicos","Formal letters","Professional messages"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Business emails","Formal reports","Proposals","Academic essays","Cover letters","Professional presentations"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic papers","Research proposals","Business reports","Position papers","Professional correspondence"]},
+    {cefr:"C1",efekta:"15-16",activities:["Journal articles","Research Papers","White Papers","Professional reports","Expert digital content"]}
+  ]},
+
+  // ══════ 7º ANO ══════
+  { ano:"7º Ano", code:"EF07LI01", title:"Interagir em situações de intercâmbio oral para realizar atividades em sala de aula, de forma respeitosa e colaborativa, trocando ideias e engajando-se em brincadeiras e jogos", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Classroom language expandido (Can I borrow...? May I...?)","Turn-taking em pair work","Simple games com instruções em inglês","Collaborative tasks básicas","Polite requests (Please, Thank you, Excuse me)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Collaborative projects em grupos","Games com regras mais complexas","Negotiating roles em group work","Expressing agreement/disagreement politely","Team-building games","Peer feedback básico"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex collaborative projects","Debates com respeito a opiniões divergentes","Mediation em group conflicts","Constructive criticism","Consensus-building activities"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated collaborative tasks","Cross-cultural communication","Conflict resolution strategies","Diplomatic language","Project management em inglês"]},
+    {cefr:"B2",efekta:"13-14",activities:["Professional collaboration simulations","Complex negotiation tasks","Intercultural sensitivity","Advanced conflict management","Facilitating workshops"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert-level collaboration","Multicultural team management","Sophisticated negotiation","Cultural mediation","Academic collaboration"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI02", title:"Entrevistar os colegas para conhecer suas histórias de vida", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple past questions (Where were you born? When did you...?)","Basic biography questions","Family history básica","Simple interviews com roteiro fornecido"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended interviews sobre childhood","Past experiences (memorable moments)","Creating timelines detalhadas","Writing biographies dos colegas"]},
+    {cefr:"B1",efekta:"7-9",activities:["In-depth interviews sobre life experiences","Significant life events e their impact","Cultural background exploration","Biographical essays"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated biographical interviews","Life narratives com análise","Cultural identity exploration","Oral history projects"]},
+    {cefr:"B2",efekta:"13-14",activities:["Complex life story analysis","Thematic biographical research","Academic interview techniques","Research-based biographical projects"]},
+    {cefr:"C1",efekta:"15-16",activities:["Academic biographical research","Life history methodology","Narrative analysis","Publication-quality biographical writing"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI03", title:"Mobilizar conhecimentos prévios para compreender texto oral", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Pre-listening discussions com imagens","Brainstorming vocabulary relacionado","Prediction exercises","Visual aids para contexto","Schema activation básica"]},
+    {cefr:"A2",efekta:"4-6",activities:["Pre-listening tasks mais elaboradas","Connecting to personal experience","Predicting content from titles/keywords","KWL charts (Know, Want to know, Learned)"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated pre-listening strategies","Connecting to world knowledge","Making informed predictions","Research-based preparation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced schema activation","Interdisciplinary connections","Evaluating reliability of background knowledge","Research to build knowledge"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic listening preparation","Extensive background research","Critical evaluation of sources","Sophisticated prediction strategies"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert-level preparation","Comprehensive background research","Critical analysis of discourse context","Professional listening strategies"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI04", title:"Identificar o contexto, a finalidade, o assunto e os interlocutores em textos orais presentes no cinema, na internet, na televisão, entre outros", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Identificação de tipo de texto oral (conversa, anúncio, notícia)","Reconhecimento de setting básico","Identificação de speakers","Purpose básico (informar, entreter)","Visual clues para contexto"]},
+    {cefr:"A2",efekta:"4-6",activities:["Análise de contexto mais detalhada","Identificação de relationship entre speakers","Tone recognition (formal/informal)","Audience identification"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise sofisticada de contexto","Identificação de implicit purpose","Speaker attitudes e intentions","Register analysis","Authentic materials complexos (documentaries, podcasts)"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Complex context analysis","Multiple purposes identification","Implicit meanings e subtext","Socio-cultural context","Bias e perspective recognition"]},
+    {cefr:"B2",efekta:"13-14",activities:["Advanced discourse analysis","Ideological positioning","Complex interlocutor relationships","Critical evaluation of sources"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert discourse analysis","Nuanced context interpretation","Complex ideological analysis","Professional media analysis"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI05", title:"Compor, em língua inglesa, narrativas orais sobre fatos, acontecimentos e personalidades marcantes do passado", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple past narratives (3-5 sentences)","Past of \"to be\" (was/were)","Regular verbs no passado","Time markers (yesterday, last week)","Sequencing (first, then, finally)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended narratives (8-10 sentences)","Regular e irregular verbs","Past continuous introduction","Famous people biographies","Historical events simples"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex narratives com detalhes","Past perfect introduction","Narrative tenses integration","Historical figures analysis","Storytelling techniques"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated narratives","All past tenses fluently","Dramatic storytelling","Historical analysis","Engaging storytelling"]},
+    {cefr:"B2",efekta:"13-14",activities:["Advanced historical narratives","Complex temporal relationships","Analytical narratives","Historical interpretation"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert-level narratives","Nuanced historical analysis","Literary storytelling techniques","Publication-quality narratives"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI06", title:"Antecipar o sentido global de textos em língua inglesa por inferências, com base em leitura rápida, observando títulos, primeiras e últimas frases de parágrafos e palavras-chave repetidas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Skimming básico com títulos","Identificação de palavras-chave visuais","Prediction com imagens","Cognatos para gist","Guided skimming activities"]},
+    {cefr:"A2",efekta:"4-6",activities:["Skimming de parágrafos completos","Topic sentences identification","Repeated keywords analysis","First e last sentences strategy","Timed skimming exercises"]},
+    {cefr:"B1",efekta:"7-9",activities:["Efficient skimming de textos longos","Paragraph structure analysis","Inference de main ideas","Speed reading techniques"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced skimming strategies","Complex text structure analysis","Sophisticated inference","Thesis identification"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert skimming techniques","Complex argument preview","Academic text navigation","Professional reading skills"]},
+    {cefr:"C1",efekta:"15-16",activities:["Professional skimming","Expert inference","Complex discourse navigation","Academic research reading"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI07", title:"Identificar a(s) informação(ões)-chave de partes de um texto em língua inglesa (parágrafos)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Main idea em parágrafos curtos","Topic sentences óbvias","Key information explícita","Guided identification"]},
+    {cefr:"A2",efekta:"4-6",activities:["Main idea em parágrafos mais longos","Topic sentences menos óbvias","Key vs. supporting information","Note-taking básico"]},
+    {cefr:"B1",efekta:"7-9",activities:["Key information em textos complexos","Implicit main ideas","Multiple key points per paragraph","Sophisticated note-taking"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Complex information extraction","Implicit e explicit key points","Argument identification","Advanced note-taking"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic information extraction","Complex argument analysis","Professional note-taking","Information synthesis"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert information extraction","Nuanced argument analysis","Sophisticated synthesis","Expert-level comprehension"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI08", title:"Relacionar as partes de um texto (parágrafos) para construir seu sentido global", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Sequencing de parágrafos simples","Chronological order","Connecting words básicos (and, but, then)","Simple coherence"]},
+    {cefr:"A2",efekta:"4-6",activities:["Connecting parágrafos com discourse markers","Logical relationships (cause-effect, comparison)","Pronoun reference","Cohesive devices recognition"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex paragraph relationships","Sophisticated discourse markers","Argument development tracking","Cohesion e coerência analysis"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated text organization","Complex argument structure","Advanced cohesive devices","Critical text analysis"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic text structure analysis","Complex argumentation tracking","Multiple perspectives integration","Research text comprehension"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert text analysis","Sophisticated discourse structure","Complex intertextuality","Expert-level reading"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI09", title:"Selecionar, em um texto, a informação desejada como objetivo de leitura", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Scanning para informações específicas","Finding numbers, dates, names","Locating explicit information","Practical texts (schedules, menus)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Efficient scanning","Multiple information search","Locating details em parágrafos","Purpose-driven reading"]},
+    {cefr:"B1",efekta:"7-9",activities:["Strategic scanning","Complex information search","Implicit information location","Research-oriented reading"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced scanning strategies","Multiple source scanning","Research reading","Professional scanning"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert scanning techniques","Academic research reading","Complex information synthesis","Research skills"]},
+    {cefr:"C1",efekta:"15-16",activities:["Professional scanning","Sophisticated research reading","Expert information extraction","Expert-level skills"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI10", title:"Escolher, em ambientes virtuais, textos em língua inglesa, de fontes confiáveis, para estudos/pesquisas escolares", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Identificação de websites confiáveis básicos","Recognizing .edu, .gov domains","Simple online search","Age-appropriate websites","Guided online research"]},
+    {cefr:"A2",efekta:"4-6",activities:["Evaluating website credibility básica","Identifying author/source","Publication date checking","Comparing multiple sources","Digital literacy básica"]},
+    {cefr:"B1",efekta:"7-9",activities:["Critical website evaluation","Bias identification","Source reliability assessment","Academic databases introduction","Proper citation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated source evaluation","Academic database navigation","Peer-reviewed sources identification","Advanced research skills","Citation management"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic research skills","Scholarly source evaluation","Database expertise","Literature review skills","Academic integrity"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert research skills","Sophisticated source evaluation","Academic database mastery","Publication-level research"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI11", title:"Participar de troca de opiniões e informações sobre textos, lidos na sala de aula ou em outros ambientes", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple opinions (I like/don't like)","Basic reactions (interesting, boring)","Sharing preferences","Turn-taking básico","Pair discussions"]},
+    {cefr:"A2",efekta:"4-6",activities:["Opinions com justificativas","Sharing interpretations","Comparing views","Respectful disagreement","Building on others' ideas"]},
+    {cefr:"B1",efekta:"7-9",activities:["Elaborated opinions","Critical analysis sharing","Evidence-based arguments","Facilitating discussions","Academic discussions"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated analysis sharing","Critical debates","Multiple perspectives integration","Socratic seminars"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic discussions","Critical theory application","Sophisticated debates","Research-based discussions","Professional discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert-level discussions","Sophisticated critical analysis","Academic seminars","Professional discourse"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI12", title:"Planejar a escrita de textos em função do contexto (público, finalidade, layout e suporte)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Planning com modelos fornecidos","Identifying audience básico","Simple purpose (inform, describe)","Layout templates","Guided planning"]},
+    {cefr:"A2",efekta:"4-6",activities:["Planning com menos suporte","Audience consideration","Purpose identification","Brainstorming independente","Multiple text types"]},
+    {cefr:"B1",efekta:"7-9",activities:["Independent planning","Sophisticated audience analysis","Complex purpose","Strategic planning","Genre-appropriate planning"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced planning strategies","Multiple audience consideration","Professional layout","Research-based planning"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic planning","Sophisticated audience analysis","Complex rhetorical purpose","Research planning"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert planning","Nuanced audience analysis","Sophisticated rhetorical planning","Expert outlining"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI13", title:"Organizar texto em unidades de sentido, dividindo-o em parágrafos ou tópicos e subtópicos", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple paragraph structure","One idea per paragraph","Basic formatting (title, paragraphs)","Linear organization","Templates fornecidos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Multiple paragraph organization","Topic sentences","Supporting details","Introduction-body-conclusion","Headings e subheadings"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex paragraph organization","Logical flow","Sophisticated formatting","Headings hierarchy","Genre-appropriate organization"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced text organization","Sophisticated structure","Professional formatting","Multimedia integration"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic text organization","Complex structure","Professional formatting","Publication standards"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert text organization","Publication-quality formatting","Professional design","Expert layout"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI14", title:"Produzir textos diversos sobre fatos, acontecimentos e personalidades do passado (linha do tempo, biografias, verbetes de enciclopédias, blogues)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple timelines (3-5 events)","Short biographies (50-60 words)","Basic fact sheets","Simple blog posts","Modelos fornecidos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Detailed timelines","Extended biographies (100-120 words)","Encyclopedia entries básicos","Blog posts sobre história"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex timelines com análise","Analytical biographies (180-200 words)","Detailed encyclopedia entries","Historical blog posts"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated historical writing","Interpretive biographies (250-300 words)","Academic encyclopedia entries","Professional writing"]},
+    {cefr:"B2",efekta:"13-14",activities:["Academic historical writing","Critical biographies (350-400 words)","Scholarly entries","Research papers"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert historical writing","Sophisticated biographies (500+ words)","Professional encyclopedia entries","Publication-level writing"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI15", title:"Construir repertório lexical relativo a verbos regulares e irregulares (formas no passado), preposições de tempo e conectores", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Regular verbs no passado (20-30 verbos)","Irregular verbs básicos (10-15: go-went, see-saw)","Prepositions: in (months), on (days), at (times)","Connectors: and, but, then","Flashcards e drilling"]},
+    {cefr:"A2",efekta:"4-6",activities:["Regular verbs expandidos (40-50 verbos)","Irregular verbs (25-30)","Connectors: because, so, before, after","Contextualized practice"]},
+    {cefr:"B1",efekta:"7-9",activities:["Regular verbs (60-70)","Irregular verbs (40-50)","Advanced connectors (although, however, moreover)","Natural usage em authentic contexts"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Comprehensive verb knowledge","All common irregular verbs","Complex connectors (nevertheless, consequently)","Automatic usage"]},
+    {cefr:"B2",efekta:"13-14",activities:["Advanced verb forms","Rare irregular verbs","Nuanced preposition use","Sophisticated discourse markers"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert verb knowledge","All irregular verbs","Expert preposition use","Complete mastery"]}
+  ]},
+  { ano:"7º Ano", code:"EF07LI16", title:"Reconhecer a pronúncia de verbos regulares no passado (-ed)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Three pronunciations: /t/, /d/, /ɪd/","Voiceless sounds → /t/ (walked, helped)","Voiced sounds → /d/ (played, lived)","/t/ ou /d/ → /ɪd/ (wanted, needed)","Drilling exercises","Minimal pairs"]},
+    {cefr:"A2",efekta:"4-6",activities:["Automatic recognition","Production practice","Connected speech","Natural pronunciation","Self-correction"]},
+    {cefr:"B1",efekta:"7-9",activities:["Fluent production","Natural speech patterns","Fast speech","Automatic usage"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Complete automatization","Natural connected speech","Accent variations awareness","Professional speech"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert pronunciation","Sophisticated speech patterns","Complete control","Native-like mastery"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like pronunciation","Sophisticated control","Complete mastery","Perfect accuracy"]}
+  ]},
+
+  // ══════ 8º ANO ══════
+  { ano:"8º Ano", code:"EF08LI01", title:"Fazer uso da língua inglesa para resolver mal-entendidos, emitir opiniões e esclarecer informações por meio de paráfrases ou justificativas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Expressões básicas de clarificação (Sorry? What? I don't understand)","Simple paraphrasing (You mean...?)","Basic explanations (Because...)","Repetition requests (Can you repeat?)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Paraphrasing simples (In other words...)","Justificativas com because/so","Checking understanding (Do you mean...?)","Expressing opinions com razões"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated paraphrasing","Complex justifications","Resolving misunderstandings diplomatically","Negotiation of meaning"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Expert paraphrasing","Sophisticated justifications","Diplomatic conflict resolution","Professional communication"]},
+    {cefr:"B2",efekta:"13-14",activities:["Native-like paraphrasing","Academic justifications","Professional conflict resolution","Academic discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert communication strategies","Sophisticated justification","Complex conflict resolution","Complete communicative competence"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI02", title:"Explorar o uso de recursos linguísticos (frases incompletas, hesitações) e paralinguísticos (gestos, expressões faciais) em situações de interação oral", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic hesitation sounds (Um, Uh, Well...)","Simple gestures","Facial expressions básicas","Body language awareness"]},
+    {cefr:"A2",efekta:"4-6",activities:["Hesitation devices (Let me see, Let me think)","Fillers (You know, I mean)","Gestures em apresentações","Paralinguistic awareness"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated fillers (Actually, Basically, Sort of)","Strategic pausing","Professional gestures","Presentation skills"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced discourse markers","Strategic hesitation","Professional body language","Cross-cultural awareness"]},
+    {cefr:"B2",efekta:"13-14",activities:["Native-like fillers","Sophisticated pausing strategies","Professional paralinguistic features","Sociolinguistic competence"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert discourse management","Sophisticated hesitation strategies","Complete communicative competence","Native-like control"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI03", title:"Construir o sentido global de textos orais, relacionando suas partes, o assunto principal e informações relevantes", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Listening for gist básico","Main topic identification","Key words recognition","Visual support","Multiple listenings"]},
+    {cefr:"A2",efekta:"4-6",activities:["Main idea e supporting details","Connecting parts of text","Relevant information identification","Simple inference","Note-taking básico"]},
+    {cefr:"B1",efekta:"7-9",activities:["Global meaning construction","Complex connections","Implicit information","Advanced note-taking","Critical listening"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated global comprehension","Complex text structure understanding","Implicit e explicit connections","Academic listening"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert global comprehension","Sophisticated text analysis","Complex inference","Research listening"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like comprehension","Sophisticated analysis","Expert inference","Academic mastery"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI04", title:"Utilizar recursos e repertório linguísticos apropriados para informar/comunicar/falar do futuro: planos, previsões, possibilidades e probabilidades", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Going to para planos (I'm going to study)","Will básico (I will help you)","Future time markers (tomorrow, next week)","Simple predictions (It will rain)"]},
+    {cefr:"A2",efekta:"4-6",activities:["Going to vs will distinction","Present continuous para futuro (I'm meeting John tomorrow)","Probability expressions (maybe, probably)","Extended predictions"]},
+    {cefr:"B1",efekta:"7-9",activities:["Future perfect introduction (will have done)","Future continuous (will be doing)","Sophisticated probability (might, could, may)","Complex predictions"]},
+    {cefr:"B1+",efekta:"10-12",activities:["All future forms fluently","Nuanced probability expressions","Conditional futures","Native-like control"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert future forms","Sophisticated probability","Academic discourse","Complete mastery"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like future usage","Expert probability expressions","Sophisticated predictions","Perfect accuracy"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI05", title:"Inferir informações e relações que não aparecem de modo explícito no texto para construção de sentidos", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple inference com visual support","Obvious implicit information","Context clues básicos","Picture-based inference"]},
+    {cefr:"A2",efekta:"4-6",activities:["Inference de informações implícitas","Reading between the lines básico","Character feelings/motivations","Discussion activities"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated inference","Implicit meanings","Author's purpose/tone","Critical reading"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced inference skills","Subtle implicit information","Author's bias/perspective","Complex implicit relationships"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert inference","Sophisticated implicit meanings","Ideological positioning","Complex discourse analysis"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like inference","Nuanced implicit meanings","Sophisticated discourse analysis","Complete analytical skills"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI06", title:"Apreciar textos narrativos em língua inglesa (contos, romances) como forma de valorizar o patrimônio cultural produzido em língua inglesa", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Graded readers (starter level)","Simple stories com imagens","Fairy tales simplificados","Basic plot understanding","Simple reactions"]},
+    {cefr:"A2",efekta:"4-6",activities:["Graded readers (elementary level)","Short stories adaptados","Plot e character analysis básica","Reading circles","Book reports básicos"]},
+    {cefr:"B1",efekta:"7-9",activities:["Graded readers (intermediate level)","Adapted novels","Literary analysis básica","Theme identification","Character development"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Simplified classics","Young adult literature","Literary analysis","Theme e symbolism","Book clubs"]},
+    {cefr:"B2",efekta:"13-14",activities:["Original short stories","Contemporary novels","Sophisticated literary analysis","Literary devices","Critical essays"]},
+    {cefr:"C1",efekta:"15-16",activities:["Classic literature","Contemporary fiction","Expert literary analysis","Literary criticism","Academic essays"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI07", title:"Explorar ambientes virtuais e/ou aplicativos para acessar e usufruir do patrimônio artístico literário em língua inglesa", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple e-books","Audiobooks com texto","Story apps básicos","YouTube storytelling","Teacher-selected resources"]},
+    {cefr:"A2",efekta:"4-6",activities:["E-readers (Kindle, etc.)","Audiobook platforms","Literature apps","Online libraries básicas","Digital literacy"]},
+    {cefr:"B1",efekta:"7-9",activities:["Project Gutenberg","Digital libraries","Podcast literature","Online book clubs","Critical evaluation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Academic databases","Literary journals online","Digital humanities resources","Virtual book clubs","Research skills"]},
+    {cefr:"B2",efekta:"13-14",activities:["Scholarly databases","Literary criticism online","Academic resources","Professional platforms"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert database navigation","Professional literary resources","Academic journals","Digital scholarship mastery"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI08", title:"Analisar, criticamente, o conteúdo de textos, comparando diferentes perspectivas apresentadas sobre um mesmo assunto", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Comparing two simple texts","Basic similarities/differences","Simple opinions (I agree/disagree)","Visual organizers"]},
+    {cefr:"A2",efekta:"4-6",activities:["Comparing multiple perspectives básico","Identifying different viewpoints","Simple critical thinking","Venn diagrams"]},
+    {cefr:"B1",efekta:"7-9",activities:["Critical analysis de perspectivas","Evaluating arguments","Bias identification básica","Analytical essays"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated critical analysis","Multiple perspective evaluation","Bias e propaganda recognition","Debates estruturados"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert critical analysis","Sophisticated perspective evaluation","Ideological analysis","Academic debates"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like critical analysis","Nuanced perspective evaluation","Expert comparative studies","Publication-quality analysis"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI09", title:"Avaliar a própria produção escrita e a de colegas, com base no contexto de comunicação", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Self-correction básica (spelling, punctuation)","Peer feedback simples","Checklist básica","Guided evaluation","Positive feedback focus"]},
+    {cefr:"A2",efekta:"4-6",activities:["Self-editing com critérios","Peer review estruturado","Feedback construtivo","Revision strategies","Improvement focus"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated self-evaluation","Detailed peer review","Audience awareness","Multiple drafts","Critical feedback"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced self-assessment","Professional peer review","Sophisticated criteria","Academic standards"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert self-evaluation","Academic peer review","Rhetorical analysis","Professional standards"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like self-assessment","Professional peer review","Expert criteria","Expert-level evaluation"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI10", title:"Reconstruir o texto, com cortes, acréscimos, reformulações e correções, para aprimoramento, edição e publicação final", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple corrections (spelling, punctuation)","Adding missing information","Deleting repetitions","Guided revision","One revision"]},
+    {cefr:"A2",efekta:"4-6",activities:["Content revision","Organization improvements","Sentence-level editing","Independent revision","Multiple drafts"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated revision","Content e structure editing","Style improvements","Multiple revision cycles","Publication preparation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced editing","Rhetorical improvements","Professional revision process","Publication-ready texts"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert editing","Sophisticated improvements","Academic standards","Professional revision"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like editing","Expert improvements","Publication standards","Professional revision"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI11", title:"Produzir textos (comentários em fóruns, relatos pessoais, mensagens, tweets, reportagens, histórias de ficção, blogues) sobre sonhos e projetos para o futuro", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple messages (30-40 words)","Personal plans básicos","Simple blog posts","Short comments","One draft","Teacher guidance"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended texts (80-100 words)","Personal e family plans","Blog posts sobre future","Forum comments","Planning e drafting"]},
+    {cefr:"B1",efekta:"7-9",activities:["Complex texts (150-180 words)","Community e global plans","Reportagens sobre future","Fiction writing básica","Multiple drafts"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Sophisticated texts (200-250 words)","Global issues e solutions","Professional blog posts","Short stories","Advanced writing process"]},
+    {cefr:"B2",efekta:"13-14",activities:["Advanced texts (300-350 words)","Complex future visions","Academic blog posts","Sophisticated fiction"]},
+    {cefr:"C1",efekta:"15-16",activities:["Expert texts (400+ words)","Sophisticated future analysis","Professional publications","Literary fiction"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI12", title:"Construir repertório lexical relativo a planos, previsões e expectativas para o futuro", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Future time markers (tomorrow, next week, next year)","Basic future vocabulary (plan, dream, hope, want)","Simple verbs (study, work, travel, live)","100-120 palavras"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended future vocabulary (goal, ambition, aspiration)","Career vocabulary básico","Life events (graduate, marry, retire)","150-180 palavras"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated vocabulary (objective, intention, prospect)","Professional vocabulary","Abstract concepts (success, achievement)","200-230 palavras"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced vocabulary (endeavor, pursuit, trajectory)","Academic e professional terms","Complex concepts (sustainability, innovation)","250-280 palavras"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert future vocabulary","Specialized terminology","Abstract e complex concepts","300-330 palavras"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like vocabulary","Sophisticated terminology","Professional discourse","350+ palavras"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI13", title:"Reconhecer sufixos e prefixos comuns utilizados na formação de palavras em língua inglesa", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Common suffixes (-er, -or: teacher, actor)","Plural -s/-es","Simple prefixes (un-: unhappy, unlock)","Basic word families"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended suffixes (-ful, -less, -ness: careful, careless, happiness)","Prefixes (re-, dis-, in-: rewrite, disagree, incorrect)","Word formation patterns"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated suffixes (-tion, -ment, -ity: education, development, ability)","Complex prefixes (pre-, post-, over-, under-)","Academic vocabulary"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced suffixes (-ance/-ence, -ous, -ive)","Sophisticated prefixes (mis-, inter-, trans-)","Complex word formation"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert suffix knowledge (-ify, -ize, -ate: simplify, organize, educate)","Advanced prefixes (anti-, counter-, multi-)","Academic discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Complete suffix/prefix mastery","Rare e specialized forms","Expert word formation","Complete control"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI14", title:"Utilizar formas verbais do futuro para descrever planos e expectativas e fazer previsões", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Going to para planos (I'm going to travel)","Will para previsões (It will be sunny)","Simple future structures","Time markers"]},
+    {cefr:"A2",efekta:"4-6",activities:["Going to vs will distinction clara","Present continuous para futuro próximo","Expectations (I expect to...)","Personal plans e predictions"]},
+    {cefr:"B1",efekta:"7-9",activities:["Future continuous (will be doing)","Future perfect (will have done)","Sophisticated expectations","Fluent production"]},
+    {cefr:"B1+",efekta:"10-12",activities:["All future forms fluently","Nuanced predictions","Conditional futures","Native-like control"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert future forms","Sophisticated predictions","Academic discourse","Complete mastery"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like future usage","Expert predictions","Professional discourse","Perfect accuracy"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI15", title:"Utilizar, de modo inteligível, as formas comparativas e superlativas de adjetivos para comparar qualidades e quantidades", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Comparative básico (bigger, smaller, more beautiful)","Superlative básico (the biggest, the most beautiful)","Than em comparisons","Simple comparisons"]},
+    {cefr:"A2",efekta:"4-6",activities:["Comparatives e superlatives expandidos","Irregular forms (good-better-best, bad-worse-worst)","As...as comparisons","Real-world comparisons"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated comparisons","Less/least structures","Multiple comparisons","Fluent production"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced comparative structures","Nuanced comparisons","Academic contexts","Native-like control"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert comparative usage","Sophisticated structures","Academic discourse","Native-like production"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like comparative usage","Expert structures","Professional discourse","Sophisticated usage"]}
+  ]},
+  { ano:"8º Ano", code:"EF08LI16", title:"Utilizar, de modo inteligível, formas verbais em orações condicionais dos tipos 1 e 2 (If-clauses)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Zero conditional básico (If you heat water, it boils)","Simple present em ambas as cláusulas","Controlled practice","Pattern recognition"]},
+    {cefr:"A2",efekta:"4-6",activities:["First conditional (If it rains, I will stay home)","If + present simple, will + infinitive","Real future possibilities","Independent usage"]},
+    {cefr:"B1",efekta:"7-9",activities:["Second conditional (If I had money, I would travel)","If + past simple, would + infinitive","Hypothetical situations","Fluent production"]},
+    {cefr:"B1+",efekta:"10-12",activities:["First e second conditionals fluently","Mixed conditionals introduction","Academic writing","Native-like control"]},
+    {cefr:"B2",efekta:"13-14",activities:["All conditional types","Mixed conditionals","Sophisticated hypothetical reasoning","Academic discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like conditional usage","Expert hypothetical reasoning","Sophisticated structures","Perfect accuracy"]}
+  ]},
+
+  // ══════ 9º ANO ══════
+  { ano:"9º Ano", code:"EF09LI01", title:"Fazer uso da língua inglesa para expor pontos de vista, argumentos e contra-argumentos, considerando o contexto e os recursos linguísticos voltados para a eficácia da comunicação", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple opinions (I think, I believe)","Basic agreement/disagreement","Because para justificativas simples","Guided argumentation"]},
+    {cefr:"A2",efekta:"4-6",activities:["Opinions com justificativas (I think... because...)","Simple counter-arguments (But...)","Agreeing/disagreeing politely","Structured debates básicos"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated argumentation","Counter-arguments elaborados","Discourse markers (However, Moreover, Therefore)","Persuasive techniques"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced argumentation","Sophisticated counter-arguments","Rhetorical devices","Professional persuasion"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert argumentation","Nuanced counter-arguments","Academic debates","Research-based arguments"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like argumentation","Expert counter-arguments","Sophisticated rhetoric","Publication-quality arguments"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI02", title:"Compilar as ideias-chave de textos por meio de tomada de notas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple note-taking (key words)","Copying main ideas","Bullet points básicos","Guided note-taking","Templates fornecidos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Structured note-taking","Main ideas e details","Abbreviations básicas","Cornell method introduction"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated note-taking","Hierarchical organization","Symbols e abbreviations","Mind mapping","Lecture notes"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced note-taking strategies","Multiple source synthesis","Professional abbreviations","Digital note-taking"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert note-taking","Sophisticated synthesis","Professional systems","Academic research notes"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like note-taking","Expert synthesis","Professional standards","Expert information processing"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI03", title:"Analisar posicionamentos defendidos e refutados em textos orais sobre temas de interesse social e coletivo", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Identifying basic positions (for/against)","Simple opinions recognition","Basic arguments","Guided analysis","Visual support"]},
+    {cefr:"A2",efekta:"4-6",activities:["Identifying main arguments","Basic refutations","Supporting evidence recognition","Social topics básicos"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated argument analysis","Counter-argument identification","Evidence evaluation","Critical listening"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced argument analysis","Sophisticated refutation recognition","Bias identification","Global issues"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert argument analysis","Nuanced refutation analysis","Ideological positioning","Professional analysis"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like analysis","Expert refutation analysis","Sophisticated ideological analysis","Complete critical competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI04", title:"Expor resultados de pesquisa ou estudo com o apoio de recursos (notas, gráficos, tabelas), adequando as estratégias de construção do texto oral aos objetivos de comunicação", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple presentations (2-3 minutes)","Visual aids obrigatórios","Reading from notes","Basic graphs/tables","Guided preparation"]},
+    {cefr:"A2",efekta:"4-6",activities:["Structured presentations (3-5 minutes)","Visual support (slides, posters)","Speaking from notes","Simple data presentation"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated presentations (5-7 minutes)","Professional visual aids","Minimal notes","Data analysis presentation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced presentations (7-10 minutes)","Multimedia integration","Speaking without notes","Sophisticated data visualization"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert presentations (10-15 minutes)","Professional multimedia","Complex data analysis","Academic research"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like presentations (15+ minutes)","Sophisticated multimedia","Expert delivery","Conference-quality presentations"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI05", title:"Identificar recursos de persuasão (escolha e jogo de palavras, uso de cores e imagens, tamanho de letras) em textos publicitários e de propaganda", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic persuasive elements","Simple slogans","Color recognition","Image analysis básica","Visual materials"]},
+    {cefr:"A2",efekta:"4-6",activities:["Persuasive language (Buy now! Don't miss!)","Wordplay básico","Color psychology introduction","Typography awareness"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated persuasive techniques","Rhetorical devices","Color symbolism","Visual rhetoric","Media literacy"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced persuasive strategies","Sophisticated wordplay","Semiotics básica","Visual manipulation"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert persuasion analysis","Rhetorical sophistication","Semiotic analysis","Visual ideology"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like analysis","Expert rhetoric","Sophisticated semiotics","Ideological analysis"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI06", title:"Distinguir fatos de opiniões em textos argumentativos da esfera jornalística", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic fact vs opinion (simple examples)","Identifying opinion words (I think, I believe)","Simple news texts","Guided identification"]},
+    {cefr:"A2",efekta:"4-6",activities:["Fact vs opinion em textos mais complexos","Opinion markers (In my view, It seems)","News articles","Critical thinking básico"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated fact/opinion distinction","Implicit opinions","Bias identification","Editorial analysis","Media literacy"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced fact/opinion analysis","Subtle bias recognition","Objectivity evaluation","Journalistic standards"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert fact/opinion distinction","Ideological positioning","Sophisticated bias analysis","Media criticism"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like analysis","Expert bias detection","Professional media criticism","Complete critical competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI07", title:"Identificar argumentos principais e as evidências/exemplos que os sustentam", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Main argument identification (simple texts)","Basic examples recognition","Simple evidence","Guided identification","Visual organizers"]},
+    {cefr:"A2",efekta:"4-6",activities:["Main e supporting arguments","Evidence types (facts, statistics, examples)","Argument structure básica","Graphic organizers"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated argument analysis","Evidence evaluation","Argument strength assessment","Critical reading"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced argument analysis","Sophisticated evidence evaluation","Logical fallacies identification","Research skills"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert argument analysis","Nuanced evidence evaluation","Sophisticated fallacy detection","Research papers"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like analysis","Expert evidence evaluation","Professional discourse","Complete analytical competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI08", title:"Explorar ambientes virtuais de informação e socialização, analisando a qualidade e a validade das informações veiculadas", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic website evaluation","Identifying reliable sources (.edu, .gov)","Simple credibility checks","Teacher-selected sources"]},
+    {cefr:"A2",efekta:"4-6",activities:["Website credibility evaluation","Author identification","Date checking","Social media awareness","Digital citizenship"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated source evaluation","Bias identification online","Fake news recognition","Information verification"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced digital literacy","Sophisticated credibility assessment","Misinformation detection","Fact-checking strategies"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert digital literacy","Sophisticated information evaluation","Propaganda detection","Academic research online"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like digital literacy","Expert information evaluation","Sophisticated misinformation analysis","Complete digital competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI09", title:"Compartilhar com os colegas a leitura dos textos escritos pelo grupo, valorizando os diferentes pontos de vista com ética e respeito", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple text sharing","Basic peer feedback (I like...)","Respectful listening","Guided sharing"]},
+    {cefr:"A2",efekta:"4-6",activities:["Structured text sharing","Constructive feedback","Respecting different views","Discussion protocols"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated text sharing","Critical but respectful feedback","Valuing diversity of perspectives","Discussion facilitation"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced peer review","Sophisticated feedback","Multiple perspective appreciation","Intellectual respect"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert peer review","Nuanced feedback","Sophisticated perspective analysis","Scholarly discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like peer review","Expert feedback","Sophisticated perspective integration","Complete collaborative competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI10", title:"Propor potenciais argumentos para expor e defender ponto de vista em texto escrito, pesquisando dados, evidências e exemplos para sustentar os argumentos", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple arguments (I think... because...)","Basic examples","Simple research","Guided argument development"]},
+    {cefr:"A2",efekta:"4-6",activities:["Structured arguments","Supporting examples","Basic research skills","Evidence collection"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated arguments","Multiple evidence types","Research-based writing","Counter-argument consideration"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced argumentation","Sophisticated evidence","In-depth research","Counter-argument refutation"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert argumentation","Nuanced evidence","Academic research","Sophisticated refutation"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like argumentation","Expert evidence","Professional research","Complete argumentative competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI11", title:"Utilizar recursos verbais e não verbais para construção da persuasão em textos da esfera publicitária", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple persuasive words (Buy! New! Free!)","Basic images","Simple colors","Guided creation","Templates fornecidos"]},
+    {cefr:"A2",efekta:"4-6",activities:["Persuasive language expandida","Image-text integration","Color choices","Typography básica","Creative projects"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated persuasive techniques","Visual rhetoric","Design principles","Target audience consideration"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced persuasive strategies","Sophisticated visual design","Rhetorical devices","Professional production"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert persuasive techniques","Sophisticated design","Advanced rhetoric","Professional standards"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like persuasion","Expert design","Sophisticated rhetoric","Complete persuasive competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI12", title:"Produzir textos (infográficos, fóruns, fotorreportagens, campanhas publicitárias, memes) sobre temas de interesse coletivo local ou global, que revelem posicionamento crítico", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Simple infographics","Basic forum posts","Simple photo captions","Short campaigns","Guided production"]},
+    {cefr:"A2",efekta:"4-6",activities:["Structured infographics","Forum discussions","Photo essays básicas","Campaign materials","Local topics"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated infographics","Critical forum discussions","Professional photo essays","Persuasive campaigns","Global topics"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced infographics","Academic forum discussions","Documentary-style essays","Professional campaigns"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert infographics","Professional forum discourse","Journalistic photo essays","Strategic campaigns"]},
+    {cefr:"C1",efekta:"15-16",activities:["Professional infographics","Expert forum discourse","Expert campaigns","Publication-quality work"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI13", title:"Reconhecer, nos novos gêneros digitais, novas formas de escrita (abreviações, pictogramas, símbolos gráficos)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic abbreviations (LOL, OMG, BRB)","Simple emoticons :-) :-(","Common acronyms","Guided recognition"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended abbreviations (ASAP, FYI, BTW)","Emojis 😊 😢 👍","Leetspeak básico (gr8, l8r)","Social media texts"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated digital writing","Context-appropriate abbreviations","Emoji combinations","Internet slang","Register awareness"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced digital literacy","Professional vs informal digital writing","Meme language","Internet culture","Code-switching online"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert digital communication","Sophisticated register control","Digital rhetoric","Online discourse analysis"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like digital literacy","Expert register control","Sophisticated digital rhetoric","Complete digital competence"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI14", title:"Utilizar conectores indicadores de adição, condição, oposição, contraste, conclusão e síntese como auxiliares na construção da argumentação", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Basic connectors (and, but, because, so)","Simple addition (also, too)","Simple contrast (but)","Pattern recognition"]},
+    {cefr:"A2",efekta:"4-6",activities:["Extended connectors (however, therefore, although)","Addition (furthermore, moreover)","Contrast (on the other hand)","Conclusion (in conclusion)"]},
+    {cefr:"B1",efekta:"7-9",activities:["Sophisticated connectors (nevertheless, consequently, whereas)","Condition (provided that, unless)","Opposition (despite, in spite of)","Synthesis (to sum up, overall)"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced discourse markers (notwithstanding, albeit, hence)","Sophisticated condition (on condition that)","Nuanced contrast (conversely, alternatively)","Professional writing"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert discourse markers","Sophisticated argumentation","Academic connectors","Rhetorical effectiveness"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like discourse markers","Expert argumentation","Sophisticated rhetoric","Perfect usage"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI15", title:"Empregar, de modo inteligível, as formas verbais em orações condicionais dos tipos 1, 2 e 3 (If-clauses)", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Zero conditional review","First conditional básico (If it rains, I will stay home)","Simple practice","Pattern recognition"]},
+    {cefr:"A2",efekta:"4-6",activities:["First conditional expandido","Second conditional introduction (If I had money, I would travel)","Real vs hypothetical distinction","Independent usage"]},
+    {cefr:"B1",efekta:"7-9",activities:["All three conditionals","Third conditional (If I had studied, I would have passed)","Past hypothetical situations","Sophisticated usage"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Mixed conditionals (If I had studied, I would be successful now)","Sophisticated hypothetical reasoning","Native-like control","Complete automatization"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert conditional usage","All types fluently","Sophisticated hypothetical reasoning","Academic discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like conditional usage","Expert hypothetical reasoning","Complete control","Perfect accuracy"]}
+  ]},
+  { ano:"9º Ano", code:"EF09LI16", title:"Empregar, de modo inteligível, os verbos should, must, have to, may e might para indicar recomendação, necessidade ou obrigação e probabilidade", levels:[
+    {cefr:"A1",efekta:"1-3",activities:["Should para recomendação (You should study)","Must para obrigação (You must stop)","Have to básico (I have to go)","Simple practice"]},
+    {cefr:"A2",efekta:"4-6",activities:["Should vs must distinction","Have to vs must","May para possibilidade (It may rain)","Might introduction","Independent usage"]},
+    {cefr:"B1",efekta:"7-9",activities:["All modals fluently","Nuanced differences (must vs have to)","Probability scale (might < may < will)","Professional situations"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Advanced modal usage","Subtle distinctions","Past modals (should have, must have)","Academic writing"]},
+    {cefr:"B2",efekta:"13-14",activities:["Expert modal usage","Sophisticated distinctions","All forms including past","Academic discourse"]},
+    {cefr:"C1",efekta:"15-16",activities:["Native-like modal usage","Expert distinctions","Sophisticated usage","Perfect accuracy"]}
+  ]},
+
+  // ══════ ENSINO MÉDIO ══════
+  { ano:"Ensino Médio", code:"EM13LGG101", title:"Compreender e analisar processos de produção e circulação de discursos, nas diferentes linguagens, para fazer escolhas fundamentadas em função de interesses pessoais e coletivos", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Análise de textos básicos em diferentes mídias","Identificação de propósito comunicativo","Escolhas linguísticas simples","Discussões sobre interesses pessoais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de discursos em múltiplas linguagens","Processos de produção textual","Circulação de informação","Escolhas críticas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise sofisticada de discursos","Produção e circulação em contextos globais","Escolhas fundamentadas","Interesses coletivos"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de processos discursivos","Multimodalidade","Ideologia e poder","Escolhas éticas"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise expert de discursos complexos","Processos de produção sofisticados","Circulação global","Escolhas estratégicas"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG102", title:"Analisar visões de mundo, conflitos de interesse, preconceitos e ideologias presentes nos discursos veiculados nas diferentes mídias", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Identificação de visões de mundo básicas","Reconhecimento de preconceitos óbvios","Análise simples de mídia","Opiniões pessoais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de conflitos de interesse","Identificação de ideologias","Preconceitos em discursos","Interpretação crítica"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise sofisticada de ideologias","Conflitos de interesse complexos","Desconstrução de preconceitos","Intervenção crítica"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de visões de mundo","Ideologias implícitas","Sistemas de poder","Intervenção fundamentada"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise expert de ideologias complexas","Desconstrução sofisticada","Intervenção crítica estratégica","Transformação social"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG103", title:"Analisar o funcionamento das linguagens para interpretar e produzir criticamente discursos em textos de diversas semioses (visuais, verbais, sonoras, gestuais)", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Análise de linguagens básicas","Textos multimodais simples","Interpretação guiada","Produção básica"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de múltiplas semioses","Textos multimodais complexos","Interpretação crítica","Produção criativa"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise sofisticada de semioses","Funcionamento das linguagens","Interpretação crítica avançada","Produção professional"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de sistemas semióticos","Discursos multimodais complexos","Interpretação sofisticada","Produção expert"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise expert de linguagens","Sistemas semióticos complexos","Produção de alto nível"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG104", title:"Utilizar as diferentes linguagens para a compreensão e produção de textos e discursos em diversos campos de atuação social", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Uso de linguagens básicas","Textos em campos simples","Compreensão guiada","Produção básica"]},
+    {cefr:"B1",efekta:"7-9",activities:["Uso de múltiplas linguagens","Campos de atuação variados","Compreensão independente","Produção competente"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Uso sofisticado de linguagens","Campos profissionais","Compreensão crítica","Produção professional"]},
+    {cefr:"B2",efekta:"13-14",activities:["Uso expert de linguagens","Campos especializados","Compreensão sofisticada","Produção de alto nível"]},
+    {cefr:"C1",efekta:"15-16",activities:["Uso nativo de linguagens","Todos os campos de atuação","Compreensão expert","Produção profissional"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG201", title:"Utilizar as diversas linguagens em diferentes contextos, valorizando-as como fenômeno social, cultural, histórico, variável, heterogêneo e sensível aos contextos de uso", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Linguagens em contextos básicos","Variação linguística simples","Contextos culturais","Valorização da diversidade"]},
+    {cefr:"B1",efekta:"7-9",activities:["Múltiplas linguagens","Variação e heterogeneidade","Contextos históricos","Fenômeno social"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Linguagens sofisticadas","Variação complexa","Contextos culturais profundos","Análise crítica"]},
+    {cefr:"B2",efekta:"13-14",activities:["Linguagens em todos os contextos","Heterogeneidade sofisticada","Análise histórico-cultural","Valorização crítica"]},
+    {cefr:"C1",efekta:"15-16",activities:["Domínio expert de linguagens","Variação sofisticada","Análise profunda"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG202", title:"Analisar interesses, relações de poder e perspectivas de mundo nos discursos das diversas práticas de linguagem", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Identificação de interesses básicos","Relações de poder simples","Perspectivas óbvias","Análise guiada"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise de interesses","Relações de poder","Perspectivas de mundo","Significação e ideologia"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise sofisticada de poder","Perspectivas complexas","Produção de significação","Ideologias implícitas"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise crítica de poder","Perspectivas múltiplas","Circulação de discursos","Reprodução ideológica"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise expert de poder","Perspectivas sofisticadas","Constituição de discursos"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG301", title:"Participar de processos de produção individual e colaborativa em diferentes linguagens para produzir sentidos em diferentes contextos", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Produção individual básica","Colaboração simples","Linguagens básicas","Contextos simples"]},
+    {cefr:"B1",efekta:"7-9",activities:["Produção individual e colaborativa","Múltiplas linguagens","Funcionamento das linguagens","Contextos variados"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Produção sofisticada","Colaboração complexa","Linguagens integradas","Contextos profissionais"]},
+    {cefr:"B2",efekta:"13-14",activities:["Produção expert","Colaboração profissional","Todas as linguagens","Contextos especializados"]},
+    {cefr:"C1",efekta:"15-16",activities:["Produção de alto nível","Colaboração sofisticada","Domínio de linguagens"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG302", title:"Posicionar-se criticamente diante de diversas visões de mundo presentes nos discursos em diferentes linguagens", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Posicionamento básico","Visões de mundo simples","Opiniões pessoais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Posicionamento crítico","Visões de mundo diversas","Contextos de produção","Análise de circulação"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Posicionamento sofisticado","Visões de mundo complexas","Contextos profundos"]},
+    {cefr:"B2",efekta:"13-14",activities:["Posicionamento expert","Visões de mundo múltiplas","Contextos especializados"]},
+    {cefr:"C1",efekta:"15-16",activities:["Posicionamento de alto nível","Visões de mundo sofisticadas","Circulação expert"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG303", title:"Debater questões polêmicas de relevância social, analisando diferentes argumentos e opiniões, para formular, negociar e sustentar posições", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Debates simples","Questões básicas","Argumentos simples","Posições pessoais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Debates estruturados","Questões polêmicas","Análise de argumentos","Posições fundamentadas"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Debates sofisticados","Questões complexas","Argumentos múltiplos","Negociação de posições"]},
+    {cefr:"B2",efekta:"13-14",activities:["Debates expert","Questões de relevância social","Análise sofisticada","Sustentação de posições"]},
+    {cefr:"C1",efekta:"15-16",activities:["Debates de alto nível","Questões complexas","Perspectivas múltiplas","Posições sofisticadas"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG401", title:"Analisar criticamente textos para compreender e caracterizar as línguas como fenômeno (geo)político, histórico, social, cultural, variável e heterogêneo", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Análise de textos básicos","Variação linguística simples","Identidade básica","Contextos culturais"]},
+    {cefr:"B1",efekta:"7-9",activities:["Análise crítica de textos","Língua como fenômeno social","Variedades linguísticas","Expressões identitárias"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Análise sofisticada","Fenômeno geopolítico","Heterogeneidade","Identidades coletivas"]},
+    {cefr:"B2",efekta:"13-14",activities:["Análise expert","Fenômeno histórico-cultural","Variedades complexas","Identidades múltiplas"]},
+    {cefr:"C1",efekta:"15-16",activities:["Análise de alto nível","Fenômeno sofisticado","Identidades sofisticadas"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG402", title:"Empregar, nas interações sociais, a variedade e o estilo de língua adequados à situação comunicativa e ao gênero do discurso, sem preconceito linguístico", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Registro básico (formal/informal)","Situações simples","Interlocutores conhecidos","Respeito básico"]},
+    {cefr:"B1",efekta:"7-9",activities:["Variedade e estilo","Situações variadas","Adequação ao contexto","Sem preconceito linguístico"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Registro sofisticado","Situações complexas","Adequação profissional","Respeito às variedades"]},
+    {cefr:"B2",efekta:"13-14",activities:["Registro expert","Todas as situações","Adequação sofisticada","Valorização da diversidade"]},
+    {cefr:"C1",efekta:"15-16",activities:["Registro nativo","Situações complexas","Adequação perfeita","Combate ao preconceito"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG403", title:"Fazer uso do inglês como língua de comunicação global, levando em conta a multiplicidade e variedade de usos, usuários e funções dessa língua no mundo contemporâneo", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["English básico global","Usos simples","Funções básicas","Comunicação internacional"]},
+    {cefr:"B1",efekta:"7-9",activities:["English como língua franca","Usos variados","Múltiplas funções","Mundo contemporâneo"]},
+    {cefr:"B1+",efekta:"10-12",activities:["English global sofisticado","Multiplicidade de usos","Variedade de usuários","Funções complexas"]},
+    {cefr:"B2",efekta:"13-14",activities:["English global expert","Todos os usos","Todos os usuários","Todas as funções"]},
+    {cefr:"C1",efekta:"15-16",activities:["English global nativo","Usos sofisticados","Usuários diversos","Funções avançadas"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG701", title:"Explorar tecnologias digitais da informação e comunicação (TDIC) e utilizá-las de modo ético, criativo e responsável em práticas de linguagem", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["TDIC básicas","Uso ético básico","Práticas simples","Contextos conhecidos"]},
+    {cefr:"B1",efekta:"7-9",activities:["TDIC variadas","Princípios e funcionalidades","Uso responsável","Múltiplos contextos"]},
+    {cefr:"B1+",efekta:"10-12",activities:["TDIC sofisticadas","Compreensão profunda","Uso criativo","Contextos profissionais"]},
+    {cefr:"B2",efekta:"13-14",activities:["TDIC expert","Domínio de princípios","Uso estratégico","Todos os contextos"]},
+    {cefr:"C1",efekta:"15-16",activities:["TDIC de alto nível","Compreensão sofisticada","Uso expert","Contextos complexos"]}
+  ]},
+  { ano:"Ensino Médio", code:"EM13LGG702", title:"Avaliar o impacto das TDIC na formação do sujeito e em suas práticas sociais para uso crítico dessa mídia na produção de discursos em ambiente digital", levels:[
+    {cefr:"A2",efekta:"4-6",activities:["Impacto básico das TDIC","Práticas sociais simples","Uso crítico básico","Seleção guiada"]},
+    {cefr:"B1",efekta:"7-9",activities:["Impacto das TDIC","Formação do sujeito","Uso crítico","Produção digital"]},
+    {cefr:"B1+",efekta:"10-12",activities:["Impacto sofisticado","Práticas sociais complexas","Uso crítico avançado","Produção autoral"]},
+    {cefr:"B2",efekta:"13-14",activities:["Impacto expert","Formação crítica","Uso estratégico","Produção profissional"]},
+    {cefr:"C1",efekta:"15-16",activities:["Impacto de alto nível","Formação sofisticada","Uso expert","Produção de alto nível"]}
+  ]},
+];
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function cefrClass(cefr) {
+  return cefr.replace('+','p');
+}
+
+function highlightText(text, term) {
+  if (!term) return text;
+  const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re, '<mark>$1</mark>');
+}
+
+function filterData() {
+  const ano = document.getElementById('filterAno').value;
+  const cefr = document.getElementById('filterCEFR').value;
+  const efekta = document.getElementById('filterEfekta').value;
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  return DATA.filter(skill => {
+    if (ano && skill.ano !== ano) return false;
+    if (search) {
+      const inCode = skill.code.toLowerCase().includes(search);
+      const inTitle = skill.title.toLowerCase().includes(search);
+      const inActivities = skill.levels.some(l =>
+        l.activities.some(a => a.toLowerCase().includes(search))
+      );
+      if (!inCode && !inTitle && !inActivities) return false;
+    }
+    if (cefr || efekta) {
+      const hasLevel = skill.levels.some(l => {
+        if (cefr && l.cefr !== cefr) return false;
+        if (efekta && l.efekta !== efekta) return false;
+        return true;
+      });
+      if (!hasLevel) return false;
+    }
+    return true;
+  });
+}
+
+function renderCards() {
+  const grid = document.getElementById('grid');
+  const cefr = document.getElementById('filterCEFR').value;
+  const efekta = document.getElementById('filterEfekta').value;
+  const search = document.getElementById('searchInput').value.trim();
+  const results = filterData();
+
+  document.getElementById('countDisplay').textContent = results.length;
+
+  if (results.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="icon">🔍</div><h3>Nenhuma habilidade encontrada</h3><p>Tente outros filtros ou termos de busca</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = results.map(skill => {
+    // Get levels to show based on filters
+    let levelsToShow = skill.levels;
+    if (cefr) levelsToShow = levelsToShow.filter(l => l.cefr === cefr);
+    if (efekta) levelsToShow = levelsToShow.filter(l => l.efekta === efekta);
+    // Show all unique CEFRs in meta
+    const allCEFRs = [...new Set(skill.levels.map(l=>l.cefr))];
+
+    const titleHl = highlightText(skill.title, search);
+    const codeHl = highlightText(skill.code, search);
+
+    const levelsHtml = levelsToShow.map(l => {
+      const activitiesHtml = l.activities.map(a => `<li>${highlightText(a, search)}</li>`).join('');
+      return `<div class="level-row">
+        <span class="cefr-badge cefr-${cefrClass(l.cefr)}">${l.cefr}</span>
+        <span class="efekta-level">Efekta ${l.efekta}</span>
+        <div class="level-activities"><ul>${activitiesHtml}</ul></div>
+      </div>`;
+    }).join('');
+
+    const cefrTags = allCEFRs.map(c => `<span class="tag tag-cefr-${cefrClass(c)}">${c}</span>`).join('');
+
+    return `<div class="skill-card" id="card-${skill.code}">
+      <div class="card-header" onclick="toggleCard('${skill.code}')">
+        <div class="card-code">${codeHl}</div>
+        <div class="card-title">${titleHl}</div>
+        <div class="card-meta">
+          <span class="tag tag-ano">${skill.ano}</span>
+          ${cefrTags}
+        </div>
+      </div>
+      <div class="card-levels">${levelsHtml}</div>
+      <button class="expand-btn" onclick="toggleCard('${skill.code}')">
+        <span>Ver como é trabalhado por nível</span>
+        <span class="arrow">▼</span>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(code) {
+  const card = document.getElementById('card-'+code);
+  card.classList.toggle('expanded');
+}
+
+function clearFilters() {
+  document.getElementById('filterAno').value = '';
+  document.getElementById('filterCEFR').value = '';
+  document.getElementById('filterEfekta').value = '';
+  document.getElementById('searchInput').value = '';
+  renderCards();
+}
+
+// Events
+['filterAno','filterCEFR','filterEfekta'].forEach(id =>
+  document.getElementById(id).addEventListener('change', renderCards)
+);
+document.getElementById('searchInput').addEventListener('input', renderCards);
+
+// Initial render
+renderCards();
+</script>
+</body>
+</html>
